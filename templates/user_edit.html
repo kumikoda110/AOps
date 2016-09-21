@@ -1,0 +1,153 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-user"></i> 修改信息
+</li>
+{% endblock %}
+
+{% block content %}
+	<div class="col-lg-12">
+
+					<div class="alert alert-success">
+                                {{ message }}
+                            </div>
+              <div class="panel panel-body">
+                <span >
+                  <img id='jf-png' src="../static/images/jf.png">
+                </span>
+                <div class="col-sm-9">
+                  <form class="form-horizontal" action="/user/edit" method="post">
+                  {% if result %}
+                  	{% if result['result'] %}
+                  		{% if result['result']['data'] %}
+                  			
+
+                    <div class="form-group">
+                      <label for="inputEmail3" class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        手机号码
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="tel" name="phone" required class="form-control" placeholder="手机号码"  value="{{ session['phone'] }}" readonly="readonly">
+                      </div>
+                      <label id="email-check-warning" class="col-sm-6 right-label color-red">
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        真实姓名
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="username" name="username" class="form-control" placeholder="真实姓名" required value="{{ result['result']['data'][0] }}">
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        确认班级类型
+                      </label>
+                      <div class="col-sm-4">
+                        <label class="radio-inline">
+                        {% if result['result']['data'][1] == 'linux' %}
+                          <input type="radio" name="class_type" id="inlineRadio1" value="linux" checked> linux班
+                        {% else %}
+                        	<input type="radio" name="class_type" id="inlineRadio1" value="linux" > linux班
+                        {% endif %}
+                        </label>
+                        <label class="radio-inline" style="padding-left:37px">
+                        {% if result['result']['data'][1] == 'python' %}
+                          <input type="radio" name="class_type" id="inlineRadio2" value="python" checked> python班
+                        {% else %}
+                        	 <input type="radio" name="class_type" id="inlineRadio2" value="python" > python班
+                       	 {% endif %}
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        确认几期班
+                      </label>
+                      <div class="col-sm-4">
+                        <select class="form-control" name='class_num'>
+                          <option value='1'>1期班</option>
+                          <option value='2'>2期班</option>
+                          <option value='3'>3期班</option>
+                          <option value='4'>4期班</option>
+                          <option value='5'>5期班</option>
+                        </select>
+                     </div>
+                   </div>
+
+
+                    <div class="form-group">
+                     <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        姓别
+                      </label>
+                      <div class="col-sm-4">
+                        <label class="radio-inline">
+                          <input type="radio" name="sex" id="inlineRadio1" value="1"> 男
+                        </label>
+                        <label class="radio-inline" style="padding-left:37px">
+                          <input type="radio" name="sex" id="inlineRadio2" value="0" checked> 女
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label for="inputEmail3" class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        QQ号码
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="tel" name="qq" required class="form-control" placeholder="qq号码" value="{{ result['result']['data'][4] }}">
+                      </div>
+                      </label>
+                    </div>
+                 </div>
+
+                   
+                  </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                        </span>
+                        <div class="form-group">
+                          <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success">
+                              提交
+                            </button>
+                          </div>
+                        </div>
+                   	</div>
+
+                   	
+            		</div>
+                </div>
+               
+                  		{% endif %}
+                  	{% endif %}
+                  {% endif %}
+                  </form>
+                  
+                  </div>
+                </div>
+	</div>
+{% endblock %}

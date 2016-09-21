@@ -1,0 +1,180 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+    <style type="text/css">
+      .title { font-family: 微软雅黑; }
+      .color-red {
+        color: red;
+      }
+      #jf-png {
+        padding-top: 41px;
+      }
+    </style>
+  </head>
+  
+  <body>
+    <div class="col-xs-12 container-content">
+      <div>
+        <div class="row container-row">
+          <div class="navbar navbar-static-top ">
+            <div>
+              <div id="navbar">
+                <ul class="nav navbar-nav navbar-right">
+                </ul>
+              </div>
+              <!-- /.nav-collapse -->
+            </div>
+            <!-- /.container -->
+          </div>
+          <!-- /.navbar -->
+          <div class="container">
+            <div class="panel panel-default login">
+              <div class="panel-heading">
+                <div class="row">
+                  <div class="col-lg-10">
+                    <h4 class="title">
+                      京峰自动化系统注册
+                    </h4>
+                  </div>
+                  <div class="col-sm-2">
+                    <a class="btn btn-info" href="/user/login">
+                      已有账号？点击登录
+                    </a>
+                  </div>
+                </div>
+              </div>
+              <div class="panel panel-body">
+                <span >
+                  <img id='jf-png' src="../static/images/jf.png">
+                </span>
+                <div class="col-sm-9">
+                  <form class="form-horizontal" action="/user/reg" method="post">
+                    <div class="form-group">
+                      <label for="inputEmail3" class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        手机号码
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="tel" name="phone" required class="form-control" placeholder="手机号码">
+                      </div>
+                      <label id="email-check-warning" class="col-sm-6 right-label color-red">
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        真实姓名
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="username" name="username" class="form-control" placeholder="真实姓名" required>
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        密码
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="password" required name="passwd" class="form-control" placeholder="请输入6-20位字符">
+                      </div>
+                      <label id="password-check-warning" class="col-sm-6 right-label color-red">
+                      </label>
+                    </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        确认密码
+                      </label>
+                      <div class="col-sm-4">
+                        <input type="password"  name="en_passwd" class="form-control" required placeholder="请确认您的密码">
+                      </div>
+                      <label id="ensure-password-check-warning" class="col-sm-6 right-label color-red">
+                      </label>
+                    </div>
+
+
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        确认班级类型
+                      </label>
+                      <div class="col-sm-4">
+                        <label class="radio-inline">
+                          <input type="radio" name="class_type" id="inlineRadio1" value="linux"> linux班
+                        </label>
+                        <label class="radio-inline" style="padding-left:37px">
+                          <input type="radio" name="class_type" id="inlineRadio2" value="python" checked> python班
+                        </label>
+                      </div>
+                    </div>
+
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                          *
+                        </span>
+                        确认几期班
+                      </label>
+                      <div class="col-sm-4">
+                        <select class="form-control" name='class_num'>
+                          <option value='1'>1期班</option>
+                          <option value='2'>2期班</option>
+                          <option value='3'>3期班</option>
+                          <option value='4'>4期班</option>
+                          <option value='5'>5期班</option>
+                        </select>
+                     </div>
+                  </div>
+                    <div class="form-group">
+                      <label class="col-sm-2 control-label">
+                        <span class="color-red">
+                        </span>
+                        <div class="form-group">
+                          <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-success">
+                              提交注册信息
+                            </button>
+                          </div>
+                        </div>
+                        </div>
+                          {% if result %}
+                              {% if result['message'] %}
+                                  <div class="alert alert-danger">
+                                      {{ result['message'] }}
+                                  </div>
+                              {% endif %}
+                          {% endif %}
+                        </div>
+                  </form>
+                  
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!--</div>&lt;!&ndash;/.col-xs-9&ndash;&gt;-->
+        </div>
+        <!--/row-->
+      </div>
+      <!--/.container-->
+    </div>
+  </body>
+
+</html>

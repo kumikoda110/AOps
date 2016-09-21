@@ -15,7 +15,7 @@ import conf
 
 class User(object):
     # 初始化类
-    def __init__(self, phone=None, passwd=None, reg_info=None):
+    def __init__(self, phone=None, passwd=None, reg_info=None, remember=None):
         self.conn, self.cur = db.db_object()
         self.phone = phone
         self.passwd = passwd
@@ -83,7 +83,7 @@ class User(object):
     def check_reg_info(self):
         # 判断子集
         y = self.reg_info.keys()
-        if 'phone' in y and 'passwd' in y and 'class_type' in y and 'class_num' in y and 'en_passwd' in y:
+        if 'phone' in y and 'passwd' in y and 'username' in y and 'class_type' in y and 'class_num' in y and 'en_passwd' in y:
             return True
         else:
             return False
@@ -103,7 +103,15 @@ class User(object):
         else:
             return False
 
-    # 注册
+    # 判断用户提交的密码长度
+    def check_passwd_len(self):
+        if len(self.reg_info['passwd']) >= 8:
+            return True
+        else:
+            return False
+
+            # 注册
+
     def reg(self):
         self.phone = self.reg_info['phone']
         if self.user_exist():  # 如果存在，不允许注册
@@ -131,6 +139,12 @@ class User(object):
                 'message': conf._code.get(53, '密码不一致')
             }
             return result
+        elif not self.check_passwd_len():
+            result = {
+                'code': 58,
+                'message': conf._code.get(58, '密码小于8个字符')
+            }
+            return result
         else:
             passwd = hashlib.md5(self.reg_info['passwd']).hexdigest()
             query = '''
@@ -138,19 +152,22 @@ class User(object):
                         phone,
                         passwd,
                         class_type,
-                        class_num
+                        class_num,
+                        username
                     )
                     VALUE
                         (
                             '{phone}',
                             '{passwd}',
                             '{class_type}',
-                            '{class_num}'
+                            '{class_num}',
+                            '{username}'
                         )
                 '''.format(phone=self.reg_info['phone'],
                            passwd=passwd,
                            class_type=self.reg_info['class_type'],
-                           class_num=self.reg_info['class_num'])
+                           class_num=self.reg_info['class_num'],
+                           username=self.reg_info['username'])
             try:
                 self.cur.execute(query)
                 self.conn.commit()
@@ -170,7 +187,7 @@ class User(object):
 
     # 查看用户信息
     def user_info(self):
-        query = 'SELECT id,phone,passwd,class_type,class_num,sex,qq,status FROM user'
+        query = 'SELECT id,phone,username,class_type,class_num,status FROM user'
         try:
             self.cur.execute(query)
             data = self.cur.fetchall()
@@ -190,8 +207,10 @@ class User(object):
                 'message': str(e)
             }
 
-    def status_on(self):
-        query = 'UPDATE user SET status=1 WHERE phone={phone}'.format(phone=self.phone)
+    def status_on(self, phone):
+        query = 'UPDATE user SET status=1 WHERE phone="{phone}"'.format(phone=phone)
+        self.phone = phone
+        print query
         try:
             if not self.check_phone():
                 result = {
@@ -223,33 +242,100 @@ class User(object):
             }
             return result
 
+    def fetch_user(self, phone):  # 查询用户
+        query = 'SELECT username,class_type,class_num,sex,qq FROM user WHERE phone={phone}'.format(phone=phone)
+        print query
+        try:
+            self.cur.execute(query)
+            data = self.cur.fetchone()
+            result = {
+                'code': 0,
+                'message': 'success',
+                'result': {
+                    'data': data
+                }
+            }
+            return result
+
+        except Exception, e:
+            result = {
+                'code': 60,
+                'message': conf._code(60, '查询用户失败')
+            }
+            return result
+
+    def edit_user(self, username, phone, class_type, class_num, sex, qq):  # 修改用户
+        query = '''
+            UPDATE user
+            SET class_type = '{class_type}',
+             class_num = {class_num},
+             sex = {sex},
+             qq = {qq},
+             username = '{username}'
+            WHERE
+                phone = {phone};
+        '''.format(class_type=class_type,
+                   class_num=class_num,
+                   sex=sex,
+                   qq=qq,
+                   phone=phone,
+                   username=username)
+        try:
+            self.cur.execute(query)
+            self.conn.commit()
+            result = {
+                'code': 0,
+                'message': '修改用户成功'
+            }
+            return result
+        except Exception, e:
+            result = {
+                'code': 59,
+                'message': str(e)
+            }
+            return result
+
 
 if __name__ == '__main__':
-    # 用户登陆测试
-    u = User(phone=15010220814, passwd='jf123456')
+    '''
+    #用户登陆测试
+    u = User(phone=15010220814,passwd='jf123456')
     result = u.login()
     print result
     print result['message']
 
-    # 用户注册测试
+    #用户注册测试
     reg_info = {
-        'phone': '15010220816',
-        'passwd': 'jf123456',
-        'class_type': 'python',
-        'class_num': '3',
-        'en_passwd': 'jf123456'
+        'phone':'15010220817',
+        'username':'品茶',
+        'passwd':'jf123456',
+        'class_type':'python',
+        'class_num':'3',
+        'en_passwd':'jf123456'
     }
+
     u = User(reg_info=reg_info)
     result = u.reg()
     print result
     print result['message']
 
-    # 用户查看所有信息测试
+    #用户查看所有信息测试
     u = User()
     print u.user_info()
 
-    # 用户激活测试
+    #用户激活测试
     u = User(phone='15010220816')
     result = u.status_on()
     print result
     print result['message']
+
+
+    #用户查询测试
+    u = User()
+    result = u.fetch_user(phone='15010220814')
+    print result
+    '''
+    # 用户修改测试
+    u = User()
+    result = u.edit_user(phone='15010220814', class_type='bigdata', class_num=100, sex=0, qq='123456')
+    print result

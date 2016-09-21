@@ -2,6 +2,7 @@
 #-*- coding: utf-8 -*-
 
 
+# coding:utf8
 import sys
 
 reload(sys)
@@ -52,6 +53,55 @@ def logout():
     return redirect(url_for('index'))
 
 
+@app.route('/user/reg', methods=['POST', 'GET'])
+def reg():
+    result = {}
+    if request.method == 'POST':  # 注册按钮
+        reg_info = request.form.to_dict()
+        u = user.User(reg_info=reg_info)
+        result = u.reg()
+        if result.get('code', 54) == 0:
+            return redirect(url_for('index'))
+    return render_template('reg.html', result=result)
+
+
+@app.route('/user/info', methods=['POST', 'GET'])
+def user_info():
+    u = user.User()
+    if request.method == 'POST':
+        phone = request.form['phone']
+        result = u.status_on(phone=phone)
+        return redirect(url_for('user_info'))
+
+    result = u.user_info()
+    return render_template('user_info.html', result=result)
+
+
+@app.route('/user/edit', methods=['POST', 'GET'])
+def user_edit():
+    result = {}
+    code = message = None
+
+    u = user.User()
+    if request.method == 'POST':
+        phone = request.form['phone']
+        username = request.form['username']
+        class_type = request.form['class_type']
+        class_num = request.form['class_num']
+        sex = request.form['sex']
+        qq = request.form['qq']
+        edit_result = u.edit_user(phone=phone,
+                                  username=username,
+                                  class_type=class_type,
+                                  class_num=class_num,
+                                  sex=sex,
+                                  qq=qq)
+        code, message = edit_result['code'], edit_result['message']
+
+    phone = session['phone']
+    result = u.fetch_user(phone=phone)
+    return render_template('user_edit.html', result=result, code=code, message=message)
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=9000, debug=True)
-
