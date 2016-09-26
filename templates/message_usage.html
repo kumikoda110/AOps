@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block nav %}
+<li class="active">
+    <i class="fa fa-mobile-phone "></i> 短信使用情况
+</li>
+{% endblock %}
+
+{% block js %}
+<script src="../static/js/echarts.min.js"></script>
+    <script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChart = echarts.init(document.getElementById('lave'));
+
+        // 指定图表的配置项和数据
+        option = {
+          title : {
+              text: '短信接口剩余量',
+              x:'center'
+          },
+          tooltip : {
+              trigger: 'item',
+              formatter: "{a} : {b}"
+          },
+          legend: {
+              orient: 'vertical',
+              left: 'left',
+              data: ['已使用','剩余']
+          },
+          series : [
+              {
+                  name: '短信接口剩余量',
+                  type: 'pie',
+                  radius : '55%',
+                  center: ['50%', '60%'],
+                  data:[
+                      {value:7000, name:'已使用'},
+                      {value:{% if result["code"] == 0 %}{{ result['data'] }}{% else %}1{% endif%}, name:'剩余'}],
+                  itemStyle: {
+                      emphasis: {
+                          shadowBlur: 10,
+                          shadowOffsetX: 0,
+                          shadowColor: 'rgba( 0, 0.5)'
+                      }
+                  }
+              }
+          ]
+      };
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    </script>
+{% endblock %}
+
+{% block content %}
+           <div id="lave" style="width: 900px;height:600px;" ></div>
+{% endblock %}

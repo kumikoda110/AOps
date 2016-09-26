@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% block css %}
+<link href="../static/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block js  %}
+<script src="../static/js/bootstrap-datetimepicker.js"></script>
+<script src="../static/js/locales/bootstrap-datetimepicker.fr.js"></script>
+{% endblock %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-mobile-phone "></i> 上课通知
+</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+  	<h3>上课短信通知</h3>
+  	<hr>
+  	<pre>
+  	<b>注意事项</b>
+	1、本功能用于批量通知班级用户上课，发送内容会经由平台网关系统审核，所以速度较慢。
+	2、联系管理员通过 VIP通道模板报备 申请后，将通过最优质的VIP通道发送短信，速度快。
+	3、选择上课类型、几期班、填写上课时间、上课内容后平台将进行短信发送。
+  	</pre>
+  	<hr>
+
+  	<form action='/message/notify' method="POST">
+  		<label>上课类型：</label>
+  		<select name="class_type">
+		  		<option>python</option>
+		  		<option>linux</option>
+		</select>
+		<label>几期班：</label>
+  		<select name="class_num">
+		  		<option>1</option>
+		  		<option>2</option>
+		  		<option>3</option>
+		  		<option>4</option>
+		  		<option>5</option>
+		</select>
+
+		    <span  style="padding-left:20px"><label>上课时间：</label></span>
+		    <input name="ntime" class="span2" size="16" value='晚上8点'  >
+  		<label>上课内容：</label>
+  		<input  name="class_content" value="到了你就知道了" ></input>
+  		<input class="btn btn-primary btn-sm" type="submit" value="发送短信">
+  	</form>
+  	<hr>
+  </div>
+  {% if result %}
+	  <div class="col-md-12">
+		  <table class="table">
+		  	 <thead>
+			    <tr>
+			      <th>手机号</th>
+			      <th>内容</th>
+			      <th>发送状态</th>
+			      <th>日志记录状态</th>
+			    </tr>
+			</thead>
+			{% for phone in result["data"] %}
+				{% if result["data"][phone]["code"] == 0 %}
+					<tr class="success">
+				{% else %}
+					<tr class="danger">
+				{% endif %}
+						<td>{{ phone }}</td>
+						<td>{{ result["data"][phone]['data']["content"] }}</td>
+						<td>{{ result["data"][phone]["message"] }}</td>
+				{% if result["data"][phone]["log"] %}
+					<td>写入成功</td>
+				{% else %}
+					<td class="danger">写入失败</td>
+				{% endif %}
+					</tr>
+			{% endfor %}
+		  </table>
+	  </div>
+  		
+  {% endif %}
+
+  {% if result["data-error"] %}
+  		<div class="col-md-12">
+  			<div class="alert alert-danger" role="alert">无匹配用户，短信拒绝发送！！！</div>
+  		</div>
+  {% endif %}
+</div>
+{% endblock %}

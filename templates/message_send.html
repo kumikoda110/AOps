@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-mobile-phone "></i> 发送短信
+</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+  	<h3>普通短信通知</h3>
+  	<hr>
+  	<pre>
+  	<b>注意事项</b>
+	1、本功能用于发送单条短信，发送内容会经由平台网关系统审核，所以速度较慢。
+	2、联系管理员通过 VIP通道模板报备 申请后，将通过最优质的VIP通道发送短信，速度快。
+  	</pre>
+  	<hr>
+  	<form action="/message/send" method="POST">
+  		<label>手机号：</label>
+  		<input name="phone"  value=""  placeholder="请输入手机号"/>
+  		<span style="padding-left:20px"><label>短信内容：</label></span>
+  		<input  name="content" value=""  placeholder="请输入短信内容"></input>
+  		<span style="padding-left:20px"><input class="btn btn-primary btn-sm" type="submit" value="发送短信"></span>
+  	</form>
+  	<hr>
+  </div>
+  {% if result %}
+	  <div class="col-md-12">
+		  <table class="table">
+		  	 <thead>
+			    <tr>
+			      <th>手机号</th>
+			      <th>内容</th>
+			      <th>发送状态</th>
+			    </tr>
+			</thead>
+			{% if result["code"] == 0 %}
+				<tr class="success">
+				<td>{{ result["data"]["phone"] }}</td>
+				<td>{{ result["data"]["content"] }}</td>
+				<td>{{ result["message"] }}</td>
+				</tr>
+			{% else %}
+				<tr class="danger">
+					<td>{{ result["phone"] }}</td>
+					<td>{{ result["content"] }}</td>
+					<td>{{ result["message"] }}</td>
+				</tr>
+			{% endif %}
+		  </table>
+	  </div>
+  {% endif %}
+</div>
+{% endblock %}

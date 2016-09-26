@@ -7,19 +7,27 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 
 db_info = {
-        "host" : "211.166.22.190",
+        "host" : "192.168.0.10",
         "port" : 3306,
-        "user" : "aops",
-        "passwd" : "aops_pass",
+        "user" : "root",
+        "passwd" : "p@ssw0rd",
         "db" : "aops",
         "charset" : "utf8"
     }
+
+#message api info
+message_info = {
+            'url' : 'http://api.smsbao.com/sms',
+            'user' : 'kumikoda',
+            'passwd' : '8ab497874b7e7afbb02e2f0441696f3b'
+}
 
 '''
 0 正确
 1-100 用户类错误
     1-50 登陆
     50-100 注册
+    101-200 短信宝的错误
 '''
 _code = {
 	0 : '成功' ,
@@ -36,6 +44,12 @@ _code = {
     57 : '用户激活失败',
     58 : '密码小于8个字符',
     59 : '修改用户失败',
-    60 : '查询用户失败'
+    60 : '查询用户失败',
+    101 : '短信接口错误，请联系管理员处理。',
+    102 : '短信发送失败',
+    103 : '发送上课通知时查不到用户，请修改你的条件',
+    104 : '短信接口连接数据库失败',
+    105 : '发送短信时写入日志时出错',
+    106 : '获取短信余额错误',
+    107 : '获取短信日志失败'
 }
-
