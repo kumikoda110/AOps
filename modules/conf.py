@@ -19,7 +19,7 @@ db_info = {
 message_info = {
             'url' : 'http://api.smsbao.com/sms',
             'user' : 'kumikoda',
-            'passwd' : '8ab497874b7e7afbb02e2f0441696f3b'
+            'passwd' : '1b2853a309fb00d6934ff7bcfce8d281'
 }
 
 '''
