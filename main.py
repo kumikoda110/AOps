@@ -13,7 +13,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 app = Flask(__name__)
 app.secret_key = '2EsDrsG3qeLWsrXHtLmRRj4P'
 
-from modules import user, conf
+from modules import user, conf,message
 
 
 @app.route('/')
@@ -101,6 +101,35 @@ def user_edit():
     phone = session['phone']
     result = u.fetch_user(phone=phone)
     return render_template('user_edit.html', result=result, code=code, message=message)
+
+@app.route('/message/usage')
+def message_usage():
+    result = {}
+    return render_template('message_usage.html',result=result)
+
+@app.route('/message/log')
+def message_log():
+    m = message.Message()
+    result = m.log()
+    return render_template('message_log.html',result=result)
+
+@app.route('/message/send', methods=['POST','GET'])
+def message_send():
+    result = {}
+    if request.method == 'POST':
+        mes_info = request.form.to_dict()
+        m = message.Message()
+        result = m.send(**mes_info)
+    return render_template('message_send.html',result=result)
+
+@app.route('/message/notify',methods=['POST','GET'])
+def message_notify():
+    result = {}
+    if request.method == 'POST':
+        mes_info = request.form.to_dict()
+        m = message.Message()
+        result = m.notify(**mes_info)
+    return render_template('message_notify.html',result=result)
 
 
 if __name__ == '__main__':
