@@ -18,7 +18,7 @@ from modules import user, conf,message
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return redirect(url_for('view_monitor'))
 
 
 @app.route('/user/login', methods=['POST', 'GET'])
@@ -131,6 +131,16 @@ def message_notify():
         result = m.notify(**mes_info)
     return render_template('message_notify.html',result=result)
 
+@app.route('/api/monitor')
+def api_monitor():
+    m = monitor.Monitor()
+    result = m.get_all_info()
+    return jsonify(result)
+
+@app.route('/monitor')
+def view_monitor():
+    return render_template('monitor.html')
+
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=9000, debug=True)
+    app.run(host='0.0.0.0', port=9001, debug=True)

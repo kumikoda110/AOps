@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-desktop fa-fw"></i> 主机详情
+</li>
+{% endblock %}
+
+{% block content %}
+	<div class="col-lg-12">
+	<hr>
+		 <div id='mian'>
+		 	<div>
+		 		<div id='cpu' style="width: 400px;height:300px; float:left;"></div>
+		 	</div>
+		 	<div id='mem' style="width: 400px;height:300px; float:left;"></div>
+		 </div>
+	</div>
+{% endblock %}
+
+
+{% block js %}
+  	<!-- 引入 ECharts 文件 -->
+ 	<script type="text/javascript" src='./static/js/echarts.min.js'></script>
+ 	<script type="text/javascript">
+        // 基于准备好的dom，初始化echarts实例
+        var myChartCpu = echarts.init(document.getElementById('cpu'));
+        var myChartMem = echarts.init(document.getElementById('mem'));
+
+        // 指定内存容器
+        var mem_option = {
+		    tooltip : {
+		        formatter: "{a} <br/>{b} : {c}%"
+		    },
+		    toolbox: {
+		        feature: {
+		            restore: {},
+		            saveAsImage: {}
+		        }
+		    },
+		    series: [
+		        {
+		            name: '业务指标',
+		            type: 'gauge',
+		            detail: {formatter:'{value}%'},
+		            data: [{value: 10, name: 'MEM'}]
+		        }
+		    ]
+		};
+
+		// 指定CPU容器
+		var cpu_option = {
+		    tooltip : {
+		        formatter: "{a} <br/>{b} : {c}%"
+		    },
+		    toolbox: {
+		        feature: {
+		            restore: {},
+		            saveAsImage: {}
+		        }
+		    },
+		    series: [
+		        {
+		            name: '业务指标',
+		            type: 'gauge',
+		            detail: {formatter:'{value}%'},
+		            data: [{value: 20, name: 'CPU'}]
+		        }
+		    ]
+		};
+
+		// 更新函数
+		function update() {
+			$.getJSON('http://localhost/api/monitor',function(data){
+				var cpu_percent = data.cpus.cpu_percent;
+				var vm_percent = data.mems.virtual_memory.vm_percent;
+				cpu_option.series[0].data[0].value = cpu_percent;
+				mem_option.series[0].data[0].value = vm_percent;
+				myChartCpu.hideLoading();
+				myChartMem.hideLoading();
+				myChartCpu.setOption(cpu_option, true);
+				myChartMem.setOption(mem_option, true);
+			})
+		}
+		//5秒定时刷新数据
+		setInterval(function () {
+		    update()
+		},5000);
+
+        // 使用刚指定的配置项和数据显示图表。
+        myChartCpu.setOption(cpu_option);
+        myChartMem.setOption(mem_option);
+        myChartCpu.showLoading();
+        myChartMem.showLoading();
+    </script>
+ {% endblock %}
