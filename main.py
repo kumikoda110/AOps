@@ -13,7 +13,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 app = Flask(__name__)
 app.secret_key = '2EsDrsG3qeLWsrXHtLmRRj4P'
 
-from modules import user, conf,message
+from modules import user, conf,message,monitor
 
 
 @app.route('/')
