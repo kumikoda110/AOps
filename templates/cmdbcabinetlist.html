@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-user"></i> 机柜列表
+</li>
+{% endblock %}
+
+{% block content %}
+	<div class="col-lg-12">
+		<div id='message'  style="display:none;">
+			出问题了
+		</div>
+		<div class="col-lg-8">
+			<div class="panel panel-default ">
+				<div class="panel-heading">机柜列表 </div>
+				<div class="panel-body">
+					<table class="table table-striped">
+					  <thead>
+						<tr>
+						<th>机柜名</th>
+						<th>册除</th>
+						</tr>
+					  <thead>
+					  <tbody>
+					  
+					  {% if result %}
+					  	{% if result['data'] %}
+					  		{% for id,info in result['data'] %}
+					  			<tr>
+					  			<form id='roomForm' action="/cmdb/del/cabinet" method="POST">
+								  <input type='hidden' name="id" value="{{ id }}"/>
+								  <td >{{ info }}</td>
+								  <td>
+								  		<input id='roomButton' class="btn btn-danger btn-sm" type="submit" value='册除' />
+								  </td>
+								</form>
+								</tr>
+					  		{% endfor %}
+					  	{% endif %}
+					  {% endif %}
+					  
+					  </tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+{% endblock %}

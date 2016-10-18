@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-mobile-phone "></i> 远程执行命令
+</li>
+{% endblock %}
+
+{% block content %}
+
+<div class="row">
+  <div class="col-md-12">
+  	<form id='remoteForm' >
+  		<span style="padding-left:20px"><label>IP地址：</label></span>
+  		<select name='ip'>
+  		{% if result %}
+  			{% if result['data'] %}
+  				{% for ip in result['data'] %}
+		  			<option>{{ ip }}</option>
+		  		{% endfor %}
+		  	{% endif %}
+		{% endif %}
+		</select>
+
+  		<span style="padding-left:20px"><label>执行命令：</label></span>
+  		<input  name="command" value=""  placeholder="请输入执行的命令"></input>
+  		<span style="padding-left:20px"><input id='remoteButton' class="btn btn-primary btn-sm" type="submit" value="执行命令"></span>
+  	</form>
+  	<hr>
+  </div>
+  {% if result %}
+	  <div class="col-md-12">
+		  <table class="table">
+		  	 <thead>
+			    <tr>
+			      <th >ip地址</th>
+			      <th >执行状态</th>
+			      <th >执行结果</th>
+			    </tr>
+			</thead>
+				<tr>
+					<td id='ip'>1</td>
+					<td id='status'>2</td>
+					<td id='content'><pre>3</pre></td>
+				</tr>
+		  </table>
+	  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+	$(document).ready(function(){
+				//添加机房
+				$('#remoteButton').click(function(e) {
+					// 获取值转义
+					var postValue = $('#remoteForm').serialize();
+					// 禁止submit按钮生效
+					e.preventDefault();
+
+					$.post('/ops/remote',postValue,function(data){
+						//判断运行结果
+						if ( data.code != 0){
+							//错误添加消息
+							$('table tr:eq(1)').removeClass().addClass('danger')
+							$('table tr:eq(1) td:eq(2) pre').text(data.message);
+						}
+						else{
+							// 正确添加内容
+							$('table tr:eq(1)').removeClass().addClass('success')
+							$('table tr:eq(1) td:eq(2) pre').text(data.data.content);
+						}
+						//添加IP地址与状态
+						$('table tr:eq(1) td:eq(0)').text(data.ip);
+						$('table tr:eq(1) td:eq(1)').text(data.code);
+					});
+				});
+			});
+</script>
+{% endblock %}

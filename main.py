@@ -13,7 +13,7 @@ from flask import Flask, render_template, request, jsonify, session, redirect, u
 app = Flask(__name__)
 app.secret_key = '2EsDrsG3qeLWsrXHtLmRRj4P'
 
-from modules import user, conf,message,monitor
+from modules import user, conf,message,monitor,cmdb,remote
 
 
 @app.route('/')
@@ -140,6 +140,70 @@ def api_monitor():
 @app.route('/monitor')
 def view_monitor():
     return render_template('monitor.html')
+
+@app.route('/cmdb/<action>',methods=['POST','GET'])
+@app.route('/cmdb/<action>/<asset>',methods=['POST','GET'])
+def view_cmdb(action='list',asset='host'):
+    actions = ['add','del','edit','list']
+    assets = ['room','cabinet','host']
+    if request.method == 'GET':
+        if action == 'add':#增
+            return render_template('cmdbadd.html')
+        elif action == 'edit':#改
+            return render_template('cmdbedit.html')
+        else:
+            c = cmdb.Cmdb()
+            if asset == 'room':#查
+                result = c.list_room()
+                return render_template('cmdbroomlist.html',result=result)
+            elif asset == 'cabinet':
+                result = c.list_cabinet()
+                return render_template('cmdbcabinetlist.html',result=result)
+            else:
+                result = c.list_host()
+                return render_template('cmdbhostlist.html',result=result)
+    elif request.method == 'POST':
+        c = cmdb.Cmdb()
+        info = request.form.to_dict()
+        if action == 'add':#增加机柜
+            if asset == 'room':
+                result = c.add_room(**info)
+            elif asset == 'cabinet':#添加机柜
+                result = c.add_cabinet(**info)
+            elif asset == 'host':
+                result = c.add_host(**info)
+        elif action == 'del':
+            if asset == 'room':
+                result = c.del_room(**info)
+                return redirect('/cmdb/list/room')
+            elif asset == 'cabinet':
+                result = c.del_cabinet(**info)
+                return redirect('/cmdb/list/cabinet')
+            else:#删除主机
+                result = c.del_host(**info)
+                return redirect('/cmdb/list/host')
+        elif action == 'edit':
+            if asset == 'room':
+                result = c.edit_room(**info)
+            elif asset == 'cabinet':
+                result = c.edit_rabinet(**info)
+            else:#修改主机
+                result = c.edit_host(**info)
+        else:
+            result = {'code':204,'message':'请提交正确的URL'}
+        return jsonify(result)
+    else:
+        return jsonify({'code':203,'message':'服务器不支持get/post以外的请求'})
+
+@app.route('/ops/remote',methods=['POST','GET'])
+def ops_remote():
+    r = remote.Remote()
+    result = r.get_hosts()
+    if request.method == 'POST':
+        info = request.form.to_dict()
+        result = r.run(**info)
+        return jsonify(result)
+    return render_template('remote_run.html',result=result)
 
 
 if __name__ == '__main__':

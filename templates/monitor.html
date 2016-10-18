@@ -8,13 +8,26 @@
 
 {% block content %}
 	<div class="col-lg-12">
-	<hr>
-		 <div id='mian'>
-		 	<div>
-		 		<div id='cpu' style="width: 400px;height:300px; float:left;"></div>
-		 	</div>
-		 	<div id='mem' style="width: 400px;height:300px; float:left;"></div>
-		 </div>
+		<div class='col-lg-4'>
+			<div class='panel panel-success'>
+				<div class='panel-heading'>CPU利用率</div>
+				<div class='panel-body' id='cpu' style="width:400px;height:400px;margin: 0 auto;"></div>
+			</div>
+		</div>
+
+		<div class='col-lg-4'>
+			<div class='panel panel-success'>
+				<div class='panel-heading'>内存利用率</div>
+				<div class='panel-body' id='mem' style="width:400px;height:400px;margin: 0 auto;"></div>
+			</div>
+		</div>
+		<div class='col-lg-4'>
+			<div class='panel panel-success'>
+				<div class='panel-heading'>内存使用情况</div>
+				<div class='panel-body' id='mem_useage' style="width:400px;height:400px;margin: 0 auto;"></div>
+			</div>
+		</div>
+
 	</div>
 {% endblock %}
 
@@ -26,6 +39,7 @@
         // 基于准备好的dom，初始化echarts实例
         var myChartCpu = echarts.init(document.getElementById('cpu'));
         var myChartMem = echarts.init(document.getElementById('mem'));
+        var myChartMemUsage = echarts.init(document.getElementById('mem_useage'));
 
         // 指定内存容器
         var mem_option = {
@@ -40,7 +54,7 @@
 		    },
 		    series: [
 		        {
-		            name: '业务指标',
+		            name: '平均使用率',
 		            type: 'gauge',
 		            detail: {formatter:'{value}%'},
 		            data: [{value: 10, name: 'MEM'}]
@@ -61,7 +75,7 @@
 		    },
 		    series: [
 		        {
-		            name: '业务指标',
+		            name: '平均使用率',
 		            type: 'gauge',
 		            detail: {formatter:'{value}%'},
 		            data: [{value: 20, name: 'CPU'}]
@@ -69,20 +83,70 @@
 		    ]
 		};
 
+		// 指定内存使用图表容器
+		var mem_useage_option = {
+		    color: ['#3398DB'],
+		    tooltip : {
+		        trigger: 'axis',
+		        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+		            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+		        }
+		    },
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        bottom: '3%',
+		        containLabel: true
+		    },
+		    xAxis : [
+		        {
+		        	name: '资源',
+		            type : 'category',
+		            data : ['Free', 'use', 'total'],
+		            axisTick: {
+		                alignWithLabel: true
+		            }
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value'
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'使用大小',
+		            type:'bar',
+		            barWidth: '60%',
+		            data:[10, 52, 200]
+		        }
+		    ]
+		};
+
+
 		// 更新函数
 		function update() {
 			$.getJSON('http://localhost/api/monitor',function(data){
 				var cpu_percent = data.cpus.cpu_percent;
 				var vm_percent = data.mems.virtual_memory.vm_percent;
+				var vm_total = data.mems.virtual_memory.vm_total;
+				var vm_free = data.mems.virtual_memory.vm_free;
+				var vm_use = vm_total-vm_free;
+				//更新图表的值
 				cpu_option.series[0].data[0].value = cpu_percent;
 				mem_option.series[0].data[0].value = vm_percent;
+				mem_useage_option.series[0].data = [vm_free,vm_use,vm_total];
+				//隐匿加载框
 				myChartCpu.hideLoading();
 				myChartMem.hideLoading();
+				myChartMemUsage.hideLoading();
+				//重新加载图表
 				myChartCpu.setOption(cpu_option, true);
 				myChartMem.setOption(mem_option, true);
+				myChartMemUsage.setOption(mem_useage_option,true);
 			})
 		}
-		//5秒定时刷新数据
+		//5秒定时触发更新函数更新数据
 		setInterval(function () {
 		    update()
 		},5000);
@@ -90,7 +154,12 @@
         // 使用刚指定的配置项和数据显示图表。
         myChartCpu.setOption(cpu_option);
         myChartMem.setOption(mem_option);
+        myChartMemUsage.setOption(mem_useage_option);
+
+        //显示加载框
+        myChartMemUsage.showLoading();
         myChartCpu.showLoading();
         myChartMem.showLoading();
+
     </script>
  {% endblock %}

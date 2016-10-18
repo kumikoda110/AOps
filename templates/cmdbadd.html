@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+
+{% block nav %}
+<li class="active">
+    <i class="fa fa-sitemap fa-fw"></i> 添加机房
+</li>
+{% endblock %}
+
+{% block css %}
+	<style type="text/css">
+		#host_from div {
+			padding-top: 10px;
+		}
+	</style>
+
+{% endblock %}
+
+{% block content %}
+	<div class="col-lg-12">
+		<div id='message'  style="display:none;">
+			出问题了
+		</div>
+		<div class="col-lg-4">
+			<div class='panel panel-primary'>
+				<div class='panel-heading'>添加机房</div>
+				<div class="panel panel-body">
+	                  	<form id='roomForm' class="form-horizontal" >
+			                <div class="form-group">
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">机房名称：</div>
+							      <input class="form-control" name='info' placeholder="机房名称">
+							    </div>
+							    <div style="float:right;padding-right:20px;padding-top:10px";>
+							    <input id='roomButton' class="btn btn-info btn-sm" type="submit" name="info" value='添加机房'/>
+							    </div>
+							</div>
+	                	</form>
+	            </div>
+			</div>
+		</div>
+		
+
+		<div class="col-lg-4">
+			<div class='panel panel-primary'>
+				<div class='panel-heading'>添加机柜</div>
+				<div class="panel panel-body">
+	                  	<form id='cabinetForm' class="form-horizontal" action="/cmdb/add/rabinet" method="post">
+			                <div class="form-group">
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">机柜名称：</div>
+							      <input class="form-control" name='info' placeholder="机房名称">
+							    </div>
+							    <div style="float:right;padding-right:20px;padding-top:10px";>
+							    <input id='cabinetButton' class="btn btn-info btn-sm" type="submit" name="info" value='添加机柜'/>
+							    </div>
+							</div>
+	                	</form>
+	                </div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-8">
+			<div class='panel panel-primary'>
+				<div class='panel-heading'>添加主机</div>
+				<div class="panel panel-body">
+	                  	<form id="hostForm"  class="form-horizontal" action="/cmdb/add/rabinet" method="post">
+			                <div class="form-group">
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">应用名：</div>
+							      <input class="form-control" name='appliction' placeholder="appliction">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">ip：</div>
+							      <input class="form-control" name='ip' placeholder="ip">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">端口：</div>
+							      <input class="form-control" name='port' placeholder="port">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">username：</div>
+							      <input class="form-control" name='username' placeholder="username">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">password：</div>
+							      <input class="form-control" name='password' placeholder="password">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">cpu：</div>
+							      <input class="form-control" name='cpu' placeholder="cpu">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">mem：</div>
+							      <input class="form-control" name='mem' placeholder="mem">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">disk：</div>
+							      <input class="form-control" name='disk' placeholder="disk">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">room：</div>
+							      <input class="form-control" name='room_id' placeholder="room">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">机柜：</div>
+							      <input class="form-control" name='cabinet_id' placeholder="cabinet">
+							    </div>
+							    <div class="input-group" style="width: 300px;padding-left:20px;">
+							      <div class="input-group-addon">机位：</div>
+							      <input class="form-control" name='location' placeholder="location">
+							    </div>
+							    <div style="padding-right:20px;padding-top:10px";>
+							    <button id='hostButton' class="btn btn-info btn-sm">添加机柜</button>
+							    </div>
+							</div>
+	                	</form>
+	                </div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock %}
+
+{% block js %}
+	<script type="text/javascript">
+			//表单提交函数
+			function commitForm(url,postValue){
+				$.post(url,
+					   postValue,
+					   function(data){
+					   		//正确处理
+						    if(data.code === 0){
+						    	//类样式修改成红色
+								$('#message').removeClass().addClass('alert alert-success');
+							}
+							//错误处理
+							else{
+								//类样式修改成红色
+								$('#message').removeClass().addClass('alert alert-danger');
+							}
+							//显示message默认是不显示，这里显示
+							$('#message').text(data.message);
+							$('#message').show();
+							setTimeout(function(){
+								$('#message').removeClass();
+								$('#message').hide();
+							    		
+							},3000);
+					   });
+			};
+
+			$(document).ready(function(){
+				//添加机房
+				$('#roomButton').click(function(e) {
+					// 获取值转义
+					var postValue = $('#roomForm').serialize();
+					// 禁止submit按钮生效
+					e.preventDefault();
+					commitForm('/cmdb/add/room',postValue)
+				});
+
+				//添加机柜
+				$('#cabinetButton').click(function(e) {
+					// 获取值转义
+					var postValue = $('#cabinetForm').serialize();
+					// 禁止submit按钮生效
+					e.preventDefault();
+					commitForm('/cmdb/add/cabinet',postValue)
+				});
+
+				//添加主机
+				$('#hostButton').click(function(e) {
+					// 获取值转义
+					var postValue = $('#hostForm').serialize();
+					// 禁止submit按钮生效
+					e.preventDefault();
+					commitForm('/cmdb/add/host',postValue)
+				});
+			});
+	</script>
+{% endblock %}
